@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Play, Square, RotateCcw, Zap, Bot, Volume2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { StimulusDisplay } from "@/components/drill/StimulusDisplay"
 import { CountdownOverlay } from "@/components/drill/CountdownOverlay"
 import { SplitStepPulse } from "@/components/drill/SplitStepPulse"
@@ -13,20 +12,6 @@ import { useDrillEngine } from "@/hooks/useDrillEngine"
 import { useWakeLock } from "@/hooks/useWakeLock"
 import { useSettings } from "@/hooks/useSettings"
 import { DrillState } from "@/types/drill"
-
-const STATE_LABELS: Record<DrillState, string> = {
-  [DrillState.IDLE]: "Ready",
-  [DrillState.COUNTDOWN]: "Get Ready",
-  [DrillState.RUNNING]: "⚡ LIVE",
-  [DrillState.FINISHED]: "Finished",
-}
-
-const STATE_COLORS: Record<DrillState, string> = {
-  [DrillState.IDLE]: "bg-zinc-700 text-zinc-300",
-  [DrillState.COUNTDOWN]: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-  [DrillState.RUNNING]: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30 animate-pulse",
-  [DrillState.FINISHED]: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-}
 
 export default function HomePage() {
   const { settings, updateSettings, addCustomLabel, removeCustomLabel } = useSettings()
@@ -147,11 +132,9 @@ export default function HomePage() {
               style={{ paddingTop: "max(1.25rem, env(safe-area-inset-top))" }}
             >
               <div className="flex items-center gap-2">
-                <span className="text-white font-black text-lg tracking-tight">TNT</span>
+                <span className="text-white font-black text-2xl tracking-tight">TNT</span>
                 <span className="text-white/30 text-xs font-medium uppercase tracking-widest hidden sm:block">Neuro Training</span>
               </div>
-
-              <Badge className={`border ${STATE_COLORS[drillState]} font-bold text-xs px-3 py-1`}>{STATE_LABELS[drillState]}</Badge>
 
               <SettingsPanel
                 settings={settings}

@@ -72,7 +72,7 @@ export function SettingsPanel({ settings, onUpdate, onAddCustomLabel, onRemoveCu
         className="text-white/60 hover:text-white hover:bg-white/10"
         aria-label="Open Settings"
       >
-        <Settings className="w-5 h-5" />
+        <Settings className="w-7 h-7" />
       </Button>
 
       {/* Overlay */}
