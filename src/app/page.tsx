@@ -167,7 +167,10 @@ export default function HomePage() {
         <div className="flex-1" />
 
         {/* Timer + Controls */}
-          <div className="flex flex-col items-center justify-end pointer-events-auto" style={{ paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))" }}>
+        <div
+          className="flex flex-col items-center justify-end pointer-events-auto"
+          style={{ paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))" }}
+        >
           {/* Active feature badges */}
           {activeFeatures.length > 0 && !isActive && (
             <div className="flex gap-2 mb-6 flex-wrap justify-center px-4">
@@ -186,7 +189,10 @@ export default function HomePage() {
           {/* Button row */}
           <div className="flex items-center gap-4">
             {(isIdle || isFinished) && (
-              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+              >
                 <Button
                   size="lg"
                   onClick={start}
@@ -197,7 +203,10 @@ export default function HomePage() {
               </motion.div>
             )}
             {isActive && (
-              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+              >
                 <button
                   onClick={stop}
                   className="relative overflow-hidden border border-white/10 hover:border-red-500/30 active:scale-95 text-white/60 hover:text-red-300 font-semibold text-base px-7 py-3.5 rounded-xl transition-all flex items-center"

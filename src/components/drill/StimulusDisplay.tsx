@@ -41,11 +41,11 @@ const HC_GATE_TINT: Record<DirectionArrow, string> = {
 // ─── Solid gate backgrounds (arrowBgColor mode) ───────────────────────────
 // Attacking = orange, Neutral/Wide = light green, Defensive = light blue
 const GATE_BG: Record<DirectionArrow, string> = {
-  "top-left":  "rgba(249,115,22,0.5)", // orange-500 @ 50%
+  "top-left": "rgba(249,115,22,0.5)", // orange-500 @ 50%
   "top-right": "rgba(249,115,22,0.5)",
-  left:         "rgba(74,222,128,0.5)", // green-400 @ 50%
-  right:        "rgba(74,222,128,0.5)",
-  "bot-left":  "rgba(96,165,250,0.5)", // blue-400 @ 50%
+  left: "rgba(74,222,128,0.5)", // green-400 @ 50%
+  right: "rgba(74,222,128,0.5)",
+  "bot-left": "rgba(96,165,250,0.5)", // blue-400 @ 50%
   "bot-right": "rgba(96,165,250,0.5)",
 }
 
@@ -90,7 +90,6 @@ const DIRECTION_ICON: Record<DirectionArrow, React.ReactNode> = {
     />
   ),
 }
-
 
 const SIDE_LABEL: Record<DirectionArrow, string> = {
   "top-left": "LEFT",
@@ -183,21 +182,21 @@ function renderStimulus(stimulus: StimulusKind, highContrast: boolean, hideArrow
         <div style={{ color: arrowColor, filter: "drop-shadow(0 0 48px currentColor)", lineHeight: 0 }}>{icon}</div>
         {/* Gate label: e.g. ATTACKING · LEFT */}
         {!hideArrowLabel && (
-        <div className="mt-2 flex items-baseline gap-3 select-none">
-          <span
-            className="font-black uppercase tracking-[0.2em]"
-            style={{ fontSize: "clamp(1.4rem, 4.5vw, 3rem)", color: arrowColor, opacity: 0.95 }}
-          >
-            {displayLabel}
-          </span>
-          <span style={{ color: arrowColor, opacity: 0.3, fontSize: "clamp(1rem, 3vw, 2rem)" }}>·</span>
-          <span
-            className="font-black uppercase tracking-[0.2em]"
-            style={{ fontSize: "clamp(1.4rem, 4.5vw, 3rem)", color: arrowColor, opacity: 0.5 }}
-          >
-            {sideLabel}
-          </span>
-        </div>
+          <div className="mt-2 flex items-baseline gap-3 select-none">
+            <span
+              className="font-black uppercase tracking-[0.2em]"
+              style={{ fontSize: "clamp(1.4rem, 4.5vw, 3rem)", color: arrowColor, opacity: 0.95 }}
+            >
+              {displayLabel}
+            </span>
+            <span style={{ color: arrowColor, opacity: 0.3, fontSize: "clamp(1rem, 3vw, 2rem)" }}>·</span>
+            <span
+              className="font-black uppercase tracking-[0.2em]"
+              style={{ fontSize: "clamp(1.4rem, 4.5vw, 3rem)", color: arrowColor, opacity: 0.5 }}
+            >
+              {sideLabel}
+            </span>
+          </div>
         )}
       </div>
     )

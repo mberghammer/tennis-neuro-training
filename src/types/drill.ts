@@ -94,7 +94,7 @@ export const DEFAULT_SETTINGS: DrillSettings = {
   enableCustomLabels: false,
   customLabels: [
     { text: "Overhead Smash", color: "#6b7280", enabled: true },
-    { text: "Drop Shot",      color: "#eab308", enabled: true },
+    { text: "Drop Shot", color: "#eab308", enabled: true },
   ],
 
   splitStepPulse: false,

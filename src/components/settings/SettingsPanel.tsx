@@ -197,41 +197,41 @@ export function SettingsPanel({ settings, onUpdate, onAddCustomLabel, onRemoveCu
                       disabled={disabled}
                     />
 
-                  {/* Direction selector */}
-                  {settings.enableDirectional && (
-                    <div className="ml-1 mb-2 grid grid-cols-2 gap-1.5">
-                      {([
-                        ["top-left",  "↖", "Att. Left"],
-                        ["top-right", "↗", "Att. Right"],
-                        ["left",      "←", "Wide Left"],
-                        ["right",     "→", "Wide Right"],
-                        ["bot-left",  "↙", "Def. Left"],
-                        ["bot-right", "↘", "Def. Right"],
-                      ] as [DirectionArrow, string, string][]).map(([dir, arrow, name]) => {
-                        const active = settings.activeDirections.includes(dir)
-                        return (
-                          <button
-                            key={dir}
-                            disabled={disabled}
-                            onClick={() => {
-                              const next = active
-                                ? settings.activeDirections.filter((d) => d !== dir)
-                                : [...settings.activeDirections, dir]
-                              onUpdate({ activeDirections: next })
-                            }}
-                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
-                              active
-                                ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-300"
-                                : "bg-white/5 border-white/10 text-white/30 hover:border-white/25 hover:text-white/50"
-                            } ${disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
-                          >
-                            <span className="text-base leading-none">{arrow}</span>
-                            <span>{name}</span>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  )}
+                    {/* Direction selector */}
+                    {settings.enableDirectional && (
+                      <div className="ml-1 mb-2 grid grid-cols-2 gap-1.5">
+                        {(
+                          [
+                            ["top-left", "↖", "Att. Left"],
+                            ["top-right", "↗", "Att. Right"],
+                            ["left", "←", "Wide Left"],
+                            ["right", "→", "Wide Right"],
+                            ["bot-left", "↙", "Def. Left"],
+                            ["bot-right", "↘", "Def. Right"],
+                          ] as [DirectionArrow, string, string][]
+                        ).map(([dir, arrow, name]) => {
+                          const active = settings.activeDirections.includes(dir)
+                          return (
+                            <button
+                              key={dir}
+                              disabled={disabled}
+                              onClick={() => {
+                                const next = active ? settings.activeDirections.filter((d) => d !== dir) : [...settings.activeDirections, dir]
+                                onUpdate({ activeDirections: next })
+                              }}
+                              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
+                                active
+                                  ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-300"
+                                  : "bg-white/5 border-white/10 text-white/30 hover:border-white/25 hover:text-white/50"
+                              } ${disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                            >
+                              <span className="text-base leading-none">{arrow}</span>
+                              <span>{name}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    )}
                     <SwitchSetting
                       id="enableAudio"
                       label="🔊 Audio (TTS)"
@@ -269,9 +269,7 @@ export function SettingsPanel({ settings, onUpdate, onAddCustomLabel, onRemoveCu
                               }}
                               title={cl.enabled ? "Disable" : "Enable"}
                               className={`w-5 h-5 rounded flex items-center justify-center border shrink-0 transition-all ${
-                                cl.enabled
-                                  ? "bg-emerald-500/30 border-emerald-500/70 text-emerald-300"
-                                  : "bg-white/5 border-white/15 text-white/20 hover:border-white/30"
+                                cl.enabled ? "bg-emerald-500/30 border-emerald-500/70 text-emerald-300" : "bg-white/5 border-white/15 text-white/20 hover:border-white/30"
                               } ${disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
                             >
                               {cl.enabled && <span className="text-[10px] leading-none">✓</span>}
