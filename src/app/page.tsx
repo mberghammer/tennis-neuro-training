@@ -1,65 +1,230 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useEffect, useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Play, Square, RotateCcw, Zap, Bot, Volume2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { StimulusDisplay } from "@/components/drill/StimulusDisplay"
+import { CountdownOverlay } from "@/components/drill/CountdownOverlay"
+import { SplitStepPulse } from "@/components/drill/SplitStepPulse"
+import { SettingsPanel } from "@/components/settings/SettingsPanel"
+import { useDrillEngine } from "@/hooks/useDrillEngine"
+import { useWakeLock } from "@/hooks/useWakeLock"
+import { useSettings } from "@/hooks/useSettings"
+import { DrillState } from "@/types/drill"
+
+const STATE_LABELS: Record<DrillState, string> = {
+  [DrillState.IDLE]: "Ready",
+  [DrillState.COUNTDOWN]: "Get Ready",
+  [DrillState.RUNNING]: "⚡ LIVE",
+  [DrillState.FINISHED]: "Finished",
+}
+
+const STATE_COLORS: Record<DrillState, string> = {
+  [DrillState.IDLE]: "bg-zinc-700 text-zinc-300",
+  [DrillState.COUNTDOWN]: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+  [DrillState.RUNNING]: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30 animate-pulse",
+  [DrillState.FINISHED]: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+}
+
+export default function HomePage() {
+  const { settings, updateSettings, addCustomLabel, removeCustomLabel } = useSettings()
+
+  const { drillState, secondsLeft, stimulus, splitStepActive, countdownValue, start, stop, reset } = useDrillEngine(settings)
+
+  const { acquire, release } = useWakeLock()
+
+  const isRunning = drillState === DrillState.RUNNING
+  const isCountdown = drillState === DrillState.COUNTDOWN
+  const isFinished = drillState === DrillState.FINISHED
+  const isIdle = drillState === DrillState.IDLE
+  const isActive = isRunning || isCountdown
+
+  const drillContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (isActive) {
+      acquire()
+    } else {
+      release()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive])
+
+  const totalDuration = settings.config.drillDuration
+  const progressFraction = isRunning || isFinished ? (totalDuration - secondsLeft) / totalDuration : 0
+
+  const formatTime = (secs: number) => {
+    const m = Math.floor(secs / 60)
+    const s = secs % 60
+    return `${m}:${s.toString().padStart(2, "0")}`
+  }
+
+  const activeFeatures: { label: string; icon: React.ReactNode }[] = []
+  if (settings.splitStepPulse) activeFeatures.push({ label: "Split-Step", icon: <Zap className="w-3 h-3" /> })
+  if (settings.distractorMode) activeFeatures.push({ label: "Distractor", icon: <Bot className="w-3 h-3" /> })
+  if (settings.voiceOnlyMode) activeFeatures.push({ label: "Voice-Only", icon: <Volume2 className="w-3 h-3" /> })
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div
+      ref={drillContainerRef}
+      className="fixed inset-0 select-none overflow-hidden"
+      style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+    >
+      {/* Background */}
+      <div
+        className="absolute inset-0 transition-colors duration-500"
+        style={{
+          background: settings.highContrast
+            ? "#000000"
+            : isRunning
+              ? "radial-gradient(ellipse at center, #0f1a0f 0%, #050505 100%)"
+              : "radial-gradient(ellipse at center, #0d0d0d 0%, #000000 100%)",
+        }}
+      />
+
+      {/* Stimulus Layer */}
+      <StimulusDisplay
+        stimulus={stimulus}
+        voiceOnly={settings.voiceOnlyMode}
+        highContrast={settings.highContrast}
+        hideArrowLabel={settings.hideArrowLabel}
+        arrowBgColor={settings.arrowBgColor}
+      />
+
+      {/* Split-Step Pulse */}
+      <SplitStepPulse active={splitStepActive} />
+
+      {/* Countdown */}
+      <CountdownOverlay
+        value={countdownValue}
+        visible={isCountdown}
+      />
+
+      {/* Finished Screen */}
+      <AnimatePresence>
+        {isFinished && (
+          <motion.div
+            key="finished"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <motion.div
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="text-center px-8"
+            >
+              <div className="text-7xl mb-4">🎾</div>
+              <h2 className="text-4xl font-black text-white mb-2">DRILL COMPLETE</h2>
+              <p className="text-white/50 mb-8 text-lg">{formatTime(totalDuration)} of reactive training done.</p>
+              <Button
+                size="lg"
+                onClick={reset}
+                className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-lg px-10 py-6 rounded-2xl shadow-2xl shadow-emerald-500/30"
+              >
+                <RotateCcw className="w-5 h-5 mr-2" /> New Drill
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* HUD Overlay */}
+      <div className="absolute inset-0 flex flex-col pointer-events-none z-20">
+        {/* Top Bar — hidden while drill is active */}
+        <AnimatePresence>
+          {!isActive && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center justify-between px-5 pt-5 pointer-events-auto"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-white font-black text-lg tracking-tight">TNT</span>
+                <span className="text-white/30 text-xs font-medium uppercase tracking-widest hidden sm:block">Neuro Training</span>
+              </div>
+
+              <Badge className={`border ${STATE_COLORS[drillState]} font-bold text-xs px-3 py-1`}>{STATE_LABELS[drillState]}</Badge>
+
+              <SettingsPanel
+                settings={settings}
+                onUpdate={updateSettings}
+                onAddCustomLabel={addCustomLabel}
+                onRemoveCustomLabel={removeCustomLabel}
+                disabled={isActive}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex-1" />
+
+        {/* Timer + Controls */}
+          <div className="flex flex-col items-center justify-end mb-10 pointer-events-auto">
+          {/* Active feature badges */}
+          {activeFeatures.length > 0 && !isActive && (
+            <div className="flex gap-2 mb-6 flex-wrap justify-center px-4">
+              {activeFeatures.map((f) => (
+                <span
+                  key={f.label}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-white/60 bg-white/10 border border-white/10 rounded-full px-3 py-1"
+                >
+                  {f.icon}
+                  {f.label}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Button row */}
+          <div className="flex items-center gap-4">
+            {(isIdle || isFinished) && (
+              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+                <Button
+                  size="lg"
+                  onClick={start}
+                  className="bg-white/10 hover:bg-white/20 border border-white/20 active:scale-95 text-white font-semibold text-base px-7 py-3.5 rounded-xl transition-all"
+                >
+                  <Play className="w-6 h-6 mr-2 fill-black" /> START
+                </Button>
+              </motion.div>
+            )}
+            {isActive && (
+              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+                <button
+                  onClick={stop}
+                  className="relative overflow-hidden border border-white/10 hover:border-red-500/30 active:scale-95 text-white/60 hover:text-red-300 font-semibold text-base px-7 py-3.5 rounded-xl transition-all flex items-center"
+                >
+                  {/* Left-to-right fill */}
+                  <div
+                    className="absolute inset-y-0 left-0 bg-white/10"
+                    style={{ width: `${progressFraction * 100}%`, transition: "width 1s linear" }}
+                  />
+                  <span className="relative z-10 flex items-center">
+                    <Square className="w-5 h-5 mr-2 fill-current" /> STOP
+                  </span>
+                </button>
+              </motion.div>
+            )}
+          </div>
+
+          {settings.voiceOnlyMode && isRunning && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-6 text-white/40 text-sm font-medium tracking-widest uppercase"
+            >
+              🎙 Listening for audio cues…
+            </motion.p>
+          )}
         </div>
-      </main>
+      </div>
     </div>
-  );
+  )
 }

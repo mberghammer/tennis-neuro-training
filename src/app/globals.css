@@ -128,3 +128,25 @@
     @apply font-sans;
   }
 }
+
+/* ── TNT App-Level Overrides ───────────────────────────────────── */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+/* Safe-area padding for notched devices */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Drill font variable */
+:root {
+  --font-inter: "Inter", system-ui, sans-serif;
+}
