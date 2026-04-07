@@ -143,7 +143,8 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center justify-between px-5 pt-5 pointer-events-auto"
+              className="flex items-center justify-between px-5 pointer-events-auto"
+              style={{ paddingTop: "max(1.25rem, env(safe-area-inset-top))" }}
             >
               <div className="flex items-center gap-2">
                 <span className="text-white font-black text-lg tracking-tight">TNT</span>
@@ -166,7 +167,7 @@ export default function HomePage() {
         <div className="flex-1" />
 
         {/* Timer + Controls */}
-          <div className="flex flex-col items-center justify-end mb-10 pointer-events-auto">
+          <div className="flex flex-col items-center justify-end pointer-events-auto" style={{ paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))" }}>
           {/* Active feature badges */}
           {activeFeatures.length > 0 && !isActive && (
             <div className="flex gap-2 mb-6 flex-wrap justify-center px-4">
