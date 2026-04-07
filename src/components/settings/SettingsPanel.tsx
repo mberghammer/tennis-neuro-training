@@ -99,7 +99,10 @@ export function SettingsPanel({ settings, onUpdate, onAddCustomLabel, onRemoveCu
               className="fixed right-0 top-0 bottom-0 w-full max-w-md z-50 bg-zinc-950 border-l border-white/10 overflow-y-auto"
             >
               {/* Header */}
-              <div className="sticky top-0 bg-zinc-950/90 backdrop-blur border-b border-white/10 px-6 py-4 flex items-center justify-between z-10">
+              <div
+                className="sticky top-0 bg-zinc-950/90 backdrop-blur border-b border-white/10 px-6 flex items-center justify-between z-10"
+                style={{ paddingTop: "max(1rem, env(safe-area-inset-top))", paddingBottom: "1rem" }}
+              >
                 <h2 className="text-white font-bold text-lg tracking-tight">Drill Settings</h2>
                 <Button
                   variant="ghost"
@@ -111,7 +114,7 @@ export function SettingsPanel({ settings, onUpdate, onAddCustomLabel, onRemoveCu
                 </Button>
               </div>
 
-              <div className="px-6 py-6 space-y-8">
+              <div className="px-6 py-6 space-y-8" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
                 {/* ─── Drill Config ─── */}
                 <section>
                   <h3 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4">Drill Configuration</h3>
